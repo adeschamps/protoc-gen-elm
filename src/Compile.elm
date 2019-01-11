@@ -211,7 +211,7 @@ fieldDecoder : Descriptor.FieldDescriptorProto -> Expression.Expression
 fieldDecoder field =
     let
         todo label =
-            Expression.Application
+            (Expression.ParenthesizedExpression << node << Expression.Application)
                 [ Expression.FunctionOrValue [ "Debug" ] "todo" |> node
                 , Expression.Literal label |> node
                 ]
@@ -514,7 +514,7 @@ fieldType field =
                     TypeAnnotation.Typed (( [], "Never" ) |> node) []
 
                 FieldDescriptorProto.TypeMessage ->
-                    TypeAnnotation.Typed (( [], String.replace "." "" field.typeName ) |> node) []
+                    TypeAnnotation.Typed (( [], field.typeName |> String.split "." |> List.filterMap String.nonEmpty |> List.map String.classify |> String.join "." ) |> node) []
 
                 FieldDescriptorProto.TypeBytes ->
                     TypeAnnotation.Typed (( [], "Never" ) |> node) []
@@ -574,12 +574,37 @@ encoderName message =
 
 moduleName : Descriptor.FileDescriptorProto -> ModuleName
 moduleName file =
-    [ file.name |> String.replace ".proto" "" |> String.classify ]
+    file.name |> String.replace ".proto" "" |> String.split "/" |> List.map String.classify
 
 
 fieldName : Descriptor.FieldDescriptorProto -> String
 fieldName field =
-    field.name |> String.camelize
+    let
+        avoidKeywords name =
+            if List.any ((==) name) keywords then
+                name ++ "_"
+
+            else
+                name
+
+        keywords =
+            [ "if"
+            , "then"
+            , "else"
+            , "case"
+            , "of"
+            , "let"
+            , "in"
+            , "type"
+            , "module"
+            , "where"
+            , "import"
+            , "exposing"
+            , "as"
+            , "port"
+            ]
+    in
+    field.name |> String.camelize |> avoidKeywords
 
 
 fileName : File -> String

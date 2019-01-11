@@ -13,6 +13,7 @@ elm-defs: generator ## Generate Elm code from test.proto
 	$(ELM) make test_elm/Test.elm
 
 elm-plugin: generator ## Generate protobuf elm definitions
+	rm -r generated_plugin_api
 	mkdir -p generated_plugin_api
 	protoc --plugin=protoc-gen-elm --elm_out=generated_plugin_api /usr/include/google/protobuf/compiler/plugin.proto
 
