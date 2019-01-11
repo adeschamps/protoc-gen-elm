@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+// leading message comment
+message FirstMessage {
+    // a leading comment on the first field
+    optional string first_field = 42; // a trailing comment on the first field
+
+    optional string second_field = 22;
+    optional int32 third_field = 33;
+
+    repeated double many_doubles = 44;
+}
+
+// second leading message comment
+message SecondMessage {
+    // nesting messages!
+    repeated FirstMessage messages = 1;
+    required FirstMessage required_message = 2;
+}

@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+Elm = require("./elm").Elm;
+
+const flags = {}
+var app = Elm.Main.init({flags});
+
+app.ports.stdout.subscribe(function(output) {
+    var buf = Buffer.from(output);
+    process.stdout.write(buf);
+});
+
+app.ports.stderr.subscribe(function(output) {
+    console.warn(output);
+});
+
+process.stdin.on("data", function(input) {
+    var bytes = [];
+    for (const b of input) {
+        bytes.push(b);
+    }
+    app.ports.inputs.send(bytes);
+});
