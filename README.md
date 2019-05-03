@@ -1,3 +1,11 @@
+# Unmaintained
+
+I created this when Erik Timmers had just announced his Elm Protobuf
+library. I don't plan on maintaining it. You should use or contribute
+to his library instead: https://github.com/eriktim/protoc-gen-elm
+
+---
+
 This is a work in progress Protocol Buffer compiler plugin for Elm.
 
 It generates Elm type definitions from a `.proto` file, as well as
